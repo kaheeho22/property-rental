@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173f35">
+<title>物业招租 · 扫码看铺</title>
+
+<link rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+<style>
+:root {
+  --green: #173f35;
+  --gold: #d7b77a;
+  --bg: #f5f4ef;
+  --muted: #777d78;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #202a25;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.page { max-width: 620px; margin: auto; padding-bottom: 100px; }
+header {
+  background: var(--green);
+  color: white;
+  padding: 25px 20px 28px;
+}
+.eyebrow { font-size: 12px; letter-spacing: 3px; opacity: .8; }
+header h1 { margin: 12px 0 6px; font-size: 25px; }
+header p { margin: 0; color: #d8e3dc; font-size: 13px; }
+.content { padding: 16px; }
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 14px #182b2010;
+}
+.row { display: flex; justify-content: space-between; gap: 12px; }
+.label { font-size: 13px; color: var(--muted); }
+.status {
+  background: #e8f4eb;
+  color: #247347;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  height: fit-content;
+}
+h2 { font-size: 18px; margin: 0 0 14px; }
+h3 { font-size: 15px; margin: 0; }
+.number { font-size: 27px; font-weight: 700; margin: 8px 0; }
+.number small { font-size: 13px; font-weight: 400; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tag {
+  font-size: 12px; padding: 7px 10px;
+  background: #f2f3ef; border-radius: 7px; color: #59635b;
+}
+.photo-placeholder {
+  height: 180px; border-radius: 12px;
+  background: linear-gradient(135deg,#dce3d8,#aabcae);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #30493a; text-align: center; gap: 8px;
+}
+.photo-placeholder .symbol { font-size: 40px; }
+.photo-placeholder small { font-size: 12px; }
+#panorama {
+  width: 100%; height: 260px;
+  border-radius: 12px; overflow: hidden;
+  background: #e8e9e4;
+}
+.panorama-empty {
+  min-height: 170px; border-radius: 12px;
+  background: #f1f2ed; display: flex;
+  flex-direction: column; justify-content: center;
+  align-items: center; text-align: center; padding: 20px;
+}
+.panorama-empty .symbol { font-size: 32px; margin-bottom: 8px; }
+.panorama-empty p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.fee {
+  display: flex; justify-content: space-between;
+  gap: 12px; padding: 13px 0;
+  border-bottom: 1px solid #eeeeea; font-size: 14px;
+}
+.fee:last-child { border-bottom: 0; }
+.fee span:first-child { color: var(--muted); }
+.fee strong { text-align: right; font-weight: 600; }
+.note {
+  color: var(--muted); font-size: 12px; line-height: 1.7;
+  margin-top: 12px;
+}
+select {
+  width: 100%; padding: 12px; border-radius: 10px;
+  border: 1px solid #dedfd8; background: white;
+  font-size: 14px; margin-top: 10px;
+}
+.contact {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 12px max(16px,calc((100vw - 588px)/2));
+  padding-bottom: max(12px,env(safe-area-inset-bottom));
+  background: #ffffffed; backdrop-filter: blur(10px);
+  display: flex; gap: 10px; border-top: 1px solid #e8e8e2;
+}
+.contact a, .contact button {
+  flex: 1; text-align: center; padding: 14px 8px;
+  border-radius: 12px; font-size: 14px;
+  text-decoration: none; cursor: pointer;
+}
+.call {
+  border: 1px solid #d8ded8; color: var(--green);
+  background: white;
+}
+.book { background: var(--green); color: white; border: 0; }
+footer { text-align: center; color: #969a94; font-size: 11px; padding: 10px; }
+</style>
+</head>
+
+<body>
+<div class="page">
+  <header>
+    <div class="eyebrow">COMMERCIAL LEASING</div>
+    <h1>物业招租 · 扫码看铺</h1>
+    <p>空间实景 · 租赁信息 · 收费标准</p>
+  </header>
+
+  <main class="content">
+    <section class="card">
+      <div class="row">
+        <div>
+          <div class="label">当前查看铺位</div>
+          <h2 id="unitTitle" style="margin-top:8px">A栋 · A-108</h2>
+        </div>
+        <span class="status" id="status">招租中</span>
+      </div>
+
+      <div class="photo-placeholder" id="photo">
+        <div class="symbol">⌂</div>
+        <strong>铺位实景照片</strong>
+        <small>上线前可替换为真实铺位照片</small>
+      </div>
+
+      <div class="tags">
+        <span class="tag" id="areaTag">建筑面积 86㎡</span>
+        <span class="tag" id="floorTag">1层</span>
+        <span class="tag" id="typeTag">商业铺位</span>
+      </div>
+
+      <div class="label" style="margin-top:20px">参考月租金</div>
+      <div class="number" id="rent">¥ 6,880 <small>/月</small></div>
+      <div class="label" id="rentNote">演示价格，实际租金以物业确认为准</div>
+    </section>
+
+    <section class="card">
+      <h2>360° 全景看铺</h2>
+      <div id="panoramaArea">
+        <div class="panorama-empty">
+          <div class="symbol">◎</div>
+          <strong>全景素材待添加</strong>
+          <p>拍摄真实360°全景图片后，即可在这里拖动视角查看铺位。普通照片不能直接替代完整360°全景。</p>
+        </div>
+      </div>
+      <div class="note">全景图片应为真实拍摄素材。图片加载需要网络连接。</div>
+    </section>
+
+    <section class="card">
+      <h2>租赁及收费明细</h2>
+      <div class="fee">
+        <span>租金</span><strong id="rentFee">¥80 /㎡/月</strong>
+      </div>
+      <div class="fee">
+        <span>物业管理费</span><strong id="managementFee">¥8 /㎡/月</strong>
+      </div>
+      <div class="fee">
+        <span>电费</span><strong id="electricFee">¥1.20 /度</strong>
+      </div>
+      <div class="fee">
+        <span>水费</span><strong id="waterFee">¥5 /吨</strong>
+      </div>
+      <div class="fee">
+        <span>空调费</span><strong id="airFee">按实际规则</strong>
+      </div>
+      <div class="fee">
+        <span>押金及其他</span><strong id="otherFee">面议</strong>
+      </div>
+      <div class="note" id="feeNote">
+        以上均为演示数据，不代表物业真实收费标准。请以正式收费规则及租赁合同为准。
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>铺位介绍</h2>
+      <p id="description" style="font-size:14px;line-height:1.9;color:#59635b;margin:0">
+        请在这里填写铺位位置、适合业态、交付条件、装修要求及可租时间。
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>查看其他铺位</h2>
+      <div class="label">这是开发测试功能。实际使用时可以保留，也可以隐藏。</div>
+      <select id="unitSelect" aria-label="选择铺位">
+        <option value="A108">A栋 · A-108</option>
+        <option value="A109">A栋 · A-109</option>
+      </select>
+      <div class="note">正式二维码会直接打开对应铺位，无需租户手动选择。</div>
+    </section>
+    <footer>物业招商信息展示 · 请以双方正式确认为准</footer>
+  </main>
+</div>
+
+<div class="contact">
+  <a class="call" id="callButton" href="tel:13800000000">联系招商</a>
+  <button class="book" id="copyButton">复制招商微信</button>
+</div>
+
+<script>
+/*
+  首版只需修改下面的铺位资料。
+  panorama 填入真实360°全景图片的 HTTPS 地址。
+  photo 填入普通照片的 HTTPS 地址。
+  联系方式请替换成真实号码和微信号。
+*/
+const propertyData = {
+  A108: {
+    building: "A栋",
+    unit: "A-108",
+    status: "招租中",
+    area: 86,
+    floor: "1层",
+    type: "商业铺位",
+    rent: 6880,
+    rentUnit: "¥80 /㎡/月",
+    management: "¥8 /㎡/月",
+    electricity: "¥1.20 /度",
+    water: "¥5 /吨",
+    air: "按实际规则",
+    other: "面议",
+    description: "请填写本铺位的实际位置、适合业态、交付条件、装修要求及可租时间。",
+    photo: "",
+    panorama: ""
+  },
+  A109: {
+    building: "A栋",
+    unit: "A-109",
+    status: "招租中",
+    area: 72,
+    floor: "1层",
+    type: "商业铺位",
+    rent: 5760,
+    rentUnit: "¥80 /㎡/月",
+    management: "¥8 /㎡/月",
+    electricity: "¥1.20 /度",
+    water: "¥5 /吨",
+    air: "按实际规则",
+    other: "面议",
+    description: "请填写A-109铺位的实际介绍与适合业态。",
+    photo: "",
+    panorama: ""
+  }
+};
+
+// 替换为物业实际联系方式
+const contactPhone = "13800000000";
+const contactWechat = "请替换成真实微信号";
+
+function loadUnit(id) {
+  const unit = propertyData[id] || propertyData.A108;
+
+  document.getElementById("unitTitle").textContent =
+    unit.building + " · " + unit.unit;
+  document.getElementById("status").textContent = unit.status;
+  document.getElementById("areaTag").textContent =
+    "建筑面积 " + unit.area + "㎡";
+  document.getElementById("floorTag").textContent = unit.floor;
+  document.getElementById("typeTag").textContent = unit.type;
+  document.getElementById("rent").innerHTML =
+    "¥ " + Number(unit.rent).toLocaleString("zh-CN") +
+    ' <small>/月</small>';
+  document.getElementById("rentFee").textContent = unit.rentUnit;
+  document.getElementById("managementFee").textContent = unit.management;
+  document.getElementById("electricFee").textContent = unit.electricity;
+  document.getElementById("waterFee").textContent = unit.water;
+  document.getElementById("airFee").textContent = unit.air;
+  document.getElementById("otherFee").textContent = unit.other;
+  document.getElementById("description").textContent = unit.description;
+  document.getElementById("callButton").href = "tel:" + contactPhone;
+
+  const photo = document.getElementById("photo");
+  if (unit.photo) {
+    photo.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = unit.photo;
+    img.alt = unit.unit + "铺位照片";
+    img.style.cssText = "width:100%;height:180px;object-fit:cover;border-radius:12px";
+    photo.appendChild(img);
+  } else {
+    photo.innerHTML =
+      '<div class="symbol">⌂</div><strong>铺位实景照片</strong>' +
+      '<small>上线前可替换为真实铺位照片</small>';
+  }
+
+  const area = document.getElementById("panoramaArea");
+  area.innerHTML = "";
+  if (unit.panorama && window.pannellum) {
+    const viewer = document.createElement("div");
+    viewer.id = "panorama";
+    area.appendChild(viewer);
+    pannellum.viewer("panorama", {
+      type: "equirectangular",
+      panorama: unit.panorama,
+      autoLoad: true,
+      showControls: true
+    });
+  } else {
+    area.innerHTML =
+      '<div class="panorama-empty">' +
+      '<div class="symbol">◎</div><strong>全景素材待添加</strong>' +
+      '<p>拍摄真实360°全景图片后，即可在这里拖动视角查看铺位。' +
+      '普通照片不能直接替代完整360°全景。</p></div>';
+  }
+
+  document.getElementById("unitSelect").value = id;
+  document.title = unit.unit + " · 物业招租";
+}
+
+document.getElementById("unitSelect").addEventListener("change", function() {
+  const id = this.value;
+  history.replaceState(null, "", "?unit=" + encodeURIComponent(id));
+  loadUnit(id);
+});
+
+document.getElementById("copyButton").addEventListener("click", async function() {
+  try {
+    await navigator.clipboard.writeText(contactWechat);
+    alert("招商微信号已复制：" + contactWechat);
+  } catch (e) {
+    prompt("请手动复制招商微信号：", contactWechat);
+  }
+});
+
+const params = new URLSearchParams(window.location.search);
+loadUnit(params.get("unit") || "A108");
+</script>
+</body>
+</html>
